@@ -61,9 +61,9 @@ export default {
       }
     }
     $(this.$el).selectize({
-      onInitialize: () => {
-        this.selectize = this;
-        this.setValue()
+      onInitialize: function() {
+        self.selectize = this;
+        self.setValue()
       },
       onChange: value => {
         this.$emit('input', value)
@@ -165,6 +165,10 @@ export default {
     addItems (items) {
       if (Array.isArray(items)) items.forEach(item => this.$el.selectize.addItem(item));
       else this.$el.selectize.addItem(items);
+      this.setValue()
+    },
+    removeItem (item) {
+      this.$el.selectize.removeItem(item)
       this.setValue()
     }
   },
