@@ -169,9 +169,7 @@ export default {
           this.$el.selectize.addItem(item)
           if (force) this.addOptionIfNotExists(item);
         });
-      }
-      else 
-      {
+      } else {
         this.$el.selectize.addItem(items);
         if (force) this.addOptionIfNotExists(item);
       }
@@ -185,14 +183,12 @@ export default {
     addOptionIfNotExists (option) {
       const valueField = this.options.valueField || 'value';
       const labelField = this.options.labelField || 'text';
-      if (force) {
-        if (!this.options.find(option => option[valueField] === item)) {
-          let option = {};
-          option[valueField] = option;
-          option[labelField] = option;
-          this.$el.selectize.addOption(option)
-          this.$el.selectize.refreshOptions(false)
-        }
+      if (!this.options.find(option => option[valueField] === item)) {
+        let option = {};
+        option[valueField] = option;
+        option[labelField] = option;
+        this.$el.selectize.addOption(option)
+        this.$el.selectize.refreshOptions(false)
       }
     }
   },
