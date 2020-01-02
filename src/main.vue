@@ -128,6 +128,19 @@ export default {
     },
     setValue () {
       this.$el.selectize.setValue(this.value, true)
+    },
+    setOptions (options) {
+      const items = this.value;
+      this.$el.selectize.clearOptions();
+      options.forEach(option => this.$el.selectize.addOption(option));
+      items.forEach(item => this.$el.selectize.addItem(item));
+      this.$el.selectize.refreshOptions(false)
+      this.setValue()
+    },
+    addOptions (options) {
+      options.forEach(option => this.$el.selectize.addOption(option));
+      this.$el.selectize.refreshOptions(false)
+      this.setValue()
     }
   },
   beforeUpdate () {
