@@ -68,6 +68,24 @@ export default {
       onChange: value => {
         this.$emit('input', value)
       },
+      setOptions: (options) => {
+        const items = this.value;
+        this.$el.selectize.clearOptions();
+        options.forEach(option => this.$el.selectize.addOption(option));
+        items.forEach(item => this.$el.selectize.addItem(item));
+        this.$el.selectize.refreshOptions(false)
+        this.setValue()
+      },
+      addOptions: (options) => {
+        options.forEach(option => this.$el.selectize.addOption(option));
+        this.$el.selectize.refreshOptions(false)
+        this.setValue()
+      },
+      addItems: (items) => {
+        if (Array.isArray(items)) items.forEach(item => this.$el.selectize.addItem(item));
+        else this.$el.selectize.addItem(items);
+        this.setValue()
+      },
       ...this.settings
     })
     this.makeOptions(true)
