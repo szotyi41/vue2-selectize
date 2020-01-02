@@ -36,6 +36,7 @@ export default {
   },
   data () {
     return {
+      selectize: {},
       options: [],
       createdOptions: []
     }
@@ -61,6 +62,7 @@ export default {
     }
     $(this.$el).selectize({
       onInitialize: () => {
+        this.selectize = this;
         this.setValue()
       },
       onChange: value => {
