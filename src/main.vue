@@ -166,12 +166,12 @@ export default {
 
       if (Array.isArray(items)) {
         items.forEach(item => {
+          if (force) this.addOptionIfNotExists(item)
           this.$el.selectize.addItem(item)
-          if (force) this.addOptionIfNotExists(item);
         });
       } else {
-        this.$el.selectize.addItem(items);
-        if (force) this.addOptionIfNotExists(item);
+        if (force) this.addOptionIfNotExists(item)
+        this.$el.selectize.addItem(items)
       }
 
       this.setValue()
@@ -183,12 +183,21 @@ export default {
     addOptionIfNotExists (option) {
       const valueField = this.options.valueField || 'value';
       const labelField = this.options.labelField || 'text';
-      if (!this.options.find(option => option[valueField] === item)) {
-        let option = {};
-        option[valueField] = option;
-        option[labelField] = option;
+      if (!this.options.find(o => o[valueField] === item)) {
+        let o = {};
+        o[valueField] = option;
+        o[labelField] = option;
         this.$el.selectize.addOption(option)
         this.$el.selectize.refreshOptions(false)
+      }
+    },
+    addItemForce (option) {
+      if (!this.options.find(o => o === option)) {
+        const valueField = this.options.valueField || 'value'
+        this.$el.selectize.addOption(option)
+        this.$el.selectize.refreshOptions(false)
+        this.$el.selectize.addItem(option[valueField])
+        this.setValue()
       }
     }
   },
