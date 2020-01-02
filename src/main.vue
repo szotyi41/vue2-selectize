@@ -162,14 +162,38 @@ export default {
       this.$el.selectize.refreshOptions(false)
       this.setValue()
     },
-    addItems (items) {
-      if (Array.isArray(items)) items.forEach(item => this.$el.selectize.addItem(item));
-      else this.$el.selectize.addItem(items);
+    addItems (items, force = false) {
+
+      if (Array.isArray(items)) {
+        items.forEach(item => {
+          this.$el.selectize.addItem(item)
+          if (force) this.addOptionIfNotExists(item);
+        });
+      }
+      else 
+      {
+        this.$el.selectize.addItem(items);
+        if (force) this.addOptionIfNotExists(item);
+      }
+
       this.setValue()
     },
     removeItem (item) {
       this.$el.selectize.removeItem(item)
       this.setValue()
+    },
+    addOptionIfNotExists (option) {
+      const valueField = this.options.valueField || 'value';
+      const labelField = this.options.labelField || 'text';
+      if (force) {
+        if (!this.options.find(option => option[valueField] === item)) {
+          let option = {};
+          option[valueField] = option;
+          option[labelField] = option;
+          this.$el.selectize.addOption(option)
+          this.$el.selectize.refreshOptions(false)
+        }
+      }
     }
   },
   beforeUpdate () {
