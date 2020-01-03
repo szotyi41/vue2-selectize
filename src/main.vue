@@ -153,7 +153,11 @@ export default {
       const items = this.value;
       this.$el.selectize.clearOptions();
       options.forEach(option => this.$el.selectize.addOption(option));
-      items.forEach(item => this.$el.selectize.addItem(item));
+      if (Array.isArray(items)) {
+        items.forEach(item => this.$el.selectize.addItem(item));
+      } else {
+        this.$el.selectize.addItem(items);
+      }
       this.$el.selectize.refreshOptions(false)
       this.setValue()
     },
