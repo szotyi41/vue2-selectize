@@ -44,7 +44,7 @@ export default {
   mounted () {
     var self = this
     if (this.settings.create) {
-      const create = this.settings.create
+      var create = this.settings.create
       this.settings.create = function(input,callback) {
         let option = null
         if (create === true) {
@@ -69,7 +69,7 @@ export default {
         this.$emit('input', value)
       },
       setOptions: (options) => {
-        const items = this.value;
+        var items = this.value;
         this.$el.selectize.clearOptions();
         options.forEach(option => this.$el.selectize.addOption(option));
         items.forEach(item => this.$el.selectize.addItem(item));
@@ -116,9 +116,9 @@ export default {
       }
     },
     makeOptions (justLocal = false) {
-      const old = this.options
+      var old = this.options
       let _new = []
-      const nodes = this.$slots.default
+      var nodes = this.$slots.default
       if (this.settings.options === undefined && nodes) {
         _new = nodes
           .filter(node => node.tag && node.tag.toLowerCase() === 'option')
@@ -134,7 +134,7 @@ export default {
         this.options = _new
         if (!justLocal) {
           this.$el.selectize.clearOptions();
-          const optionValues = this.options.map(o => o.value)
+          var optionValues = this.options.map(o => o.value)
           Object.keys(this.$el.selectize.options)
             //IE11 fix, Object.values is not supported
             .map(key => this.$el.selectize.options[key])
@@ -153,7 +153,7 @@ export default {
       this.$el.selectize.setValue(this.value, true)
     },
     setOptions (options) {
-      const items = this.value;
+      var items = this.value;
       this.$el.selectize.clearOptions();
       options.forEach(option => this.$el.selectize.addOption(option));
       if (Array.isArray(items)) {
@@ -190,20 +190,32 @@ export default {
       this.$el.selectize.removeItem(item)
       this.setValue()
     },
-    addOptionIfNotExists (option) {
-      const valueField = this.settings.valueField || 'value';
-      const labelField = this.settings.labelField || 'text';
-      if (!this.options.find(o => o[valueField] === item)) {
-        let o = {};
-        o[valueField] = option;
-        o[labelField] = option;
+    addOptionIfNotExists (value) {
+      var found = false;
+      var valueField = this.settings.valueField || 'value';
+      var labelField = this.settings.labelField || 'text';
+      console.log('try to add option', value)
+      for (var option in this.options) {
+        if (option[valueField] === value) {
+          console.log('value found');
+          found = true;
+          return;
+        }
+      }
+
+      if (found === false) {
+        var option = {};
+        option[valueField] = value;
+        option[labelField] = value;
+        console.log('add option', option);
         this.$el.selectize.addOption(option)
         this.$el.selectize.refreshOptions(false)
+        
       }
     },
     addItemForce (option) {
       if (!this.options.find(o => o === option)) {
-        const valueField = this.settings.valueField || 'value'
+        var valueField = this.settings.valueField || 'value'
         this.$el.selectize.addOption(option)
         this.$el.selectize.refreshOptions(false)
         this.$el.selectize.addItem(option[valueField])
