@@ -147,6 +147,12 @@ export default {
       }
     },
     setValue () {
+      if (this.settings.forceAdding) {
+        var object = {};
+        object[this.settings.labelField] = this.value;
+        object[this.settings.valueField] = this.value;
+        this.addOptions([object]);
+      }
       this.$el.selectize.setValue(this.value, true)
     },
     setOptions (options) {
@@ -185,8 +191,8 @@ export default {
       this.setValue()
     },
     addOptionIfNotExists (option) {
-      const valueField = this.options.valueField || 'value';
-      const labelField = this.options.labelField || 'text';
+      const valueField = this.settings.valueField || 'value';
+      const labelField = this.settings.labelField || 'text';
       if (!this.options.find(o => o[valueField] === item)) {
         let o = {};
         o[valueField] = option;
@@ -197,7 +203,7 @@ export default {
     },
     addItemForce (option) {
       if (!this.options.find(o => o === option)) {
-        const valueField = this.options.valueField || 'value'
+        const valueField = this.settings.valueField || 'value'
         this.$el.selectize.addOption(option)
         this.$el.selectize.refreshOptions(false)
         this.$el.selectize.addItem(option[valueField])
