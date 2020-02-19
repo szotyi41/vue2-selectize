@@ -27,7 +27,10 @@ export default {
     },
     settings: {
       type: Object,
-      default: () => ({})
+      default: () => ({
+        labelField: 'text',
+        valueField: 'value'
+      })
     },
     disabled: {
       type: Boolean,
@@ -197,12 +200,12 @@ export default {
     },
     addOptionIfNotExists (value) {
       var found = false;
-      var valueField = this.settings.valueField || 'value';
-      var labelField = this.settings.labelField || 'text';
-      console.log('try to add option', value)
+      var valueField = this.settings.valueField;
+      var labelField = this.settings.labelField;
+
+      // Find value
       for (var option in this.options) {
         if (option[valueField] === value) {
-          console.log('value found');
           found = true;
           return;
         }
@@ -212,7 +215,6 @@ export default {
         var option = {};
         option[valueField] = value;
         option[labelField] = value;
-        console.log('add option', option);
         this.$el.selectize.addOption(option)
         this.$el.selectize.refreshOptions(false)
         
@@ -220,7 +222,7 @@ export default {
     },
     addItemForce (option) {
       if (!this.options.find(o => o === option)) {
-        var valueField = this.settings.valueField || 'value'
+        var valueField = this.settings.valueField
         this.$el.selectize.addOption(option)
         this.$el.selectize.refreshOptions(false)
         this.$el.selectize.addItem(option[valueField])
