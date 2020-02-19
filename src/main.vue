@@ -76,18 +76,18 @@ export default {
         this.$el.selectize.clearOptions();
         options.forEach(option => this.$el.selectize.addOption(option));
         items.forEach(item => this.$el.selectize.addItem(item));
-        this.$el.selectize.refreshOptions(false)
-        this.setValue()
+        this.$el.selectize.refreshOptions(false);
+        this.setValue();
       },
       addOptions: (options) => {
         options.forEach(option => this.$el.selectize.addOption(option));
-        this.$el.selectize.refreshOptions(false)
-        this.setValue()
+        this.$el.selectize.refreshOptions(false);
+        this.setValue();
       },
       addItems: (items) => {
         if (Array.isArray(items)) items.forEach(item => this.$el.selectize.addItem(item));
         else this.$el.selectize.addItem(items);
-        this.setValue()
+        this.setValue();
       },
       ...this.settings
     })
@@ -150,6 +150,7 @@ export default {
       }
     },
     setValue () {
+      console.log('selectize value', this.value);
       if (this.settings.forceAdding) {
         this.addOptionsIfNotExists(this.value);
       }
@@ -194,22 +195,24 @@ export default {
       this.setValue()
     },
     addOptionsIfNotExists (values) {
-      for (var value in values) {
-        this.addOptionIfNotExists(value);
-      }
+      var vm = this;
+      values.forEach(function(value) {
+        vm.addOptionIfNotExists(value);
+      });
     },
     addOptionIfNotExists (value) {
+      console.log('val', value);
       var found = false;
-      var valueField = this.settings.valueField;
-      var labelField = this.settings.labelField;
+      var valueField = this.settings.valueField || 'value';
+      var labelField = this.settings.labelField || 'text';
 
       // Find value
-      for (var option in this.options) {
+      this.options.forEach(function(option) {
         if (option[valueField] === value) {
           found = true;
           return;
         }
-      }
+      });
 
       if (found === false) {
         var option = {};
@@ -222,16 +225,16 @@ export default {
     },
     addItemForce (option) {
       if (!this.options.find(o => o === option)) {
-        var valueField = this.settings.valueField
-        this.$el.selectize.addOption(option)
-        this.$el.selectize.refreshOptions(false)
-        this.$el.selectize.addItem(option[valueField])
-        this.setValue()
+        var valueField = this.settings.valueField || 'value';
+        this.$el.selectize.addOption(option);
+        this.$el.selectize.refreshOptions(false);
+        this.$el.selectize.addItem(option[valueField]);
+        this.setValue();
       }
     }
   },
   beforeUpdate () {
-    this.makeOptions()
+    this.makeOptions();
   }
 }
 </script>
