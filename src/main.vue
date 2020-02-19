@@ -149,8 +149,8 @@ export default {
     setValue () {
       if (this.settings.forceAdding) {
         var object = {};
-        object[this.settings.labelField] = this.value;
-        object[this.settings.valueField] = this.value;
+        object[this.settings.labelField || 'text'] = this.value;
+        object[this.settings.valueField || 'value'] = this.value;
         this.addOptions([object]);
       }
       this.$el.selectize.setValue(this.value, true)
