@@ -148,10 +148,7 @@ export default {
     },
     setValue () {
       if (this.settings.forceAdding) {
-        var object = {};
-        object[this.settings.labelField || 'text'] = this.value;
-        object[this.settings.valueField || 'value'] = this.value;
-        this.addOptions([object]);
+        this.addOptionIfNotExists(this.value);
       }
       this.$el.selectize.setValue(this.value, true)
     },
@@ -171,6 +168,9 @@ export default {
       options.forEach(option => this.$el.selectize.addOption(option));
       this.$el.selectize.refreshOptions(false)
       this.setValue()
+    },
+    addOption (option) {
+
     },
     addItems (items, force = false) {
 
