@@ -148,7 +148,7 @@ export default {
     },
     setValue () {
       if (this.settings.forceAdding) {
-        this.addOptionIfNotExists(this.value);
+        this.addOptionsIfNotExists(this.value);
       }
       this.$el.selectize.setValue(this.value, true)
     },
@@ -189,6 +189,11 @@ export default {
     removeItem (item) {
       this.$el.selectize.removeItem(item)
       this.setValue()
+    },
+    addOptionsIfNotExists (values) {
+      for (var value in values) {
+        this.addOptionIfNotExists(value);
+      }
     },
     addOptionIfNotExists (value) {
       var found = false;
