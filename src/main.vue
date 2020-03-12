@@ -71,7 +71,7 @@ export default {
       var onDropdownClose = this.settings.onDropdownClose;
 
       this.settings.onDropdownOpen = function ($dropdown = null) {
-          $(this.$dropdown).hide().slideDown('fast').fadeIn('fast');
+          $(this.$dropdown).hide().css({opacity: 0}).slideDown('fast').fadeIn('fast');
           onDropdownOpen($dropdown);
       }
 
