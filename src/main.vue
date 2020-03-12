@@ -71,12 +71,12 @@ export default {
       var onDropdownClose = this.settings.onDropdownClose;
 
       this.settings.onDropdownOpen = function ($dropdown = null) {
-          $(this.$dropdown).hide().slideDown('fast');
+          $(this.$dropdown).hide().slideDown('fast').fadeIn('fast');
           onDropdownOpen($dropdown);
       }
 
       this.settings.onDropdownClose = function ($dropdown = null) {
-          $(this.$dropdown).show().slideUp('fast');
+          $(this.$dropdown).show().slideUp('fast').fadeOut('fast');
           onDropdownClose($dropdown);
       }
     }
