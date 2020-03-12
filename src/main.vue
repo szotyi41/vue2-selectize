@@ -29,7 +29,8 @@ export default {
       type: Object,
       default: () => ({
         labelField: 'text',
-        valueField: 'value'
+        valueField: 'value',
+        slideToggle: true
       })
     },
     disabled: {
@@ -63,6 +64,21 @@ export default {
         return option
       }
     }
+
+    if (this.settings.slideToggle) {
+      var onDropdownOpen = this.settings.onDropdownOpen;
+      var onDropdownClose = this.settings.onDropdownClose;
+      this.settings.onDropdownOpen = function () {
+          $(this.$dropdown).hide().slideDown('fast');
+          onDropdownOpen($dropdown);
+      }
+
+      this.settings.onDropdownClose = function () {
+          $(this.$dropdown).show().slideUp('fast');
+          onDropdownClose($dropdown);
+      }
+    }
+
     $(this.$el).selectize({
       onInitialize: function() {
         self.selectize = this;
@@ -158,6 +174,8 @@ export default {
     },
     setOptions (options) {
       var items = this.value;
+      var onchange = this.$el.selectize.onChange;
+      this.$el.selectize.onChange = function() {};
       this.$el.selectize.clearOptions();
       options.forEach(option => this.$el.selectize.addOption(option));
       if (Array.isArray(items)) {
@@ -166,7 +184,8 @@ export default {
         this.$el.selectize.addItem(items);
       }
       this.$el.selectize.refreshOptions(false)
-      this.setValue()
+      this.setValue();
+      this.$el.selectize.onChange = onchange;
     },
     addOptions (options) {
       options.forEach(option => this.$el.selectize.addOption(option));
@@ -201,7 +220,6 @@ export default {
       });
     },
     addOptionIfNotExists (value) {
-      console.log('val', value);
       var found = false;
       var valueField = this.settings.valueField || 'value';
       var labelField = this.settings.labelField || 'text';
