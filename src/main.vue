@@ -66,14 +66,16 @@ export default {
     }
 
     if (this.settings.slideToggle) {
+
       var onDropdownOpen = this.settings.onDropdownOpen;
       var onDropdownClose = this.settings.onDropdownClose;
-      this.settings.onDropdownOpen = function () {
+
+      this.settings.onDropdownOpen = function ($dropdown = null) {
           $(this.$dropdown).hide().slideDown('fast');
           onDropdownOpen($dropdown);
       }
 
-      this.settings.onDropdownClose = function () {
+      this.settings.onDropdownClose = function ($dropdown = null) {
           $(this.$dropdown).show().slideUp('fast');
           onDropdownClose($dropdown);
       }
@@ -88,17 +90,10 @@ export default {
         this.$emit('input', value)
       },
       setOptions: (options) => {
-        var items = this.value;
-        this.$el.selectize.clearOptions();
-        options.forEach(option => this.$el.selectize.addOption(option));
-        items.forEach(item => this.$el.selectize.addItem(item));
-        this.$el.selectize.refreshOptions(false);
-        this.setValue();
+        this.setOptions(options);
       },
       addOptions: (options) => {
-        options.forEach(option => this.$el.selectize.addOption(option));
-        this.$el.selectize.refreshOptions(false);
-        this.setValue();
+        this.addOptions(options);
       },
       addItems: (items) => {
         if (Array.isArray(items)) items.forEach(item => this.$el.selectize.addItem(item));
