@@ -72,7 +72,8 @@ export default {
 			currentOptions: [],
 			createdOptions: [],
 			focus: false,
-			inputText: ''
+			inputText: '',
+			items: []
 		}
 	},
 	mounted() {
@@ -263,6 +264,7 @@ export default {
 
 			// Reload onchange event
 			this.enableTriggerOnChange();
+			return this.options;
 		},
 
 		// Add options if array 
@@ -274,13 +276,14 @@ export default {
 			}
 			
 			this.addOption(options);
-			return options;
+			return this.options;
 		},
 
 		// Add one option
 		addOption(option) {
 			this.element.selectize.addOption(option);
 			this.element.selectize.refreshOptions(false);
+			return this.options;
 		},
 		setItems(items, force = false) {
 
@@ -293,27 +296,31 @@ export default {
 
 			// Reload onchange event
 			this.enableTriggerOnChange();
+			return this.items;
 		},
 		addItems(items, force = false) {
 
 			if (Array.isArray(items)) {
-				items.forEach(item => this.addItem(item));
+				items.forEach(item => this.addItem(items));
 				return items;
 			}
 
 			this.addItem(items, force);
-			return items;
+			return this.items;
 		},
 		addItem(item, force = false) {
 			if (force) this.addOptionIfNotExists(item);
-			this.element.selectize.addItem(items);
+			this.element.selectize.addItem(item);
+			return this.items;
 		},
 		removeItem(item) {
 			this.element.selectize.removeItem(item);
 			this.setValue();
+			return this.items;
 		},
 		addOptionsIfNotExists(values) {
 			values.forEach(value => this.addOptionIfNotExists(value));
+			return this.options;
 		},
 		addOptionIfNotExists(value) {
 			var found = false;
@@ -345,6 +352,8 @@ export default {
 			this.element.selectize.addOptionIfNotExists(option);
 			this.element.selectize.addItem(option[valueField]);
 			this.setValue();
+
+			return this.items;
 		},
 		setFocus() {
 			this.element.selectize.focus();
