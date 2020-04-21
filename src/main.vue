@@ -117,11 +117,11 @@ export default {
 			},
 			onFocus: param => {
 				this.focus = true;
-				this.settings.onFocus(param);
+				if (this.settings.onFocus) this.settings.onFocus(param);
 			},
 			onBlur: param => {
 				this.focus = false;
-				this.settings.onBlur(param);
+				if (this.settings.onBlur) this.settings.onBlur(param);
 			},
 			setOptions: this.setOptions,
 			addOptions: this.addOptions,
@@ -143,7 +143,10 @@ export default {
 			// On enter
 			if (e.keyCode === 13 && this.settings.createOnEnter && this.focus && this.settings.create) {
 				e.preventDefault();
-				this.addItem(this.inputText, true);
+				this.settings.create(this.inputText, () => {
+					this.addItem(this.inputText, true);
+					this.log('Item added: ' + this.inputText);
+				});
 				this.log('Add item: ' + this.inputText);
 			}
 		});
@@ -324,7 +327,7 @@ export default {
 			this.$el.selectize.blur();
 		},
 		log(text) {
-			if (this.settings.debug) console.log('Selectize: ' + text);
+			if (this.settings.debug) console.log('Selectize -- ' + text);
 		}
 	},
 	beforeUpdate() {
