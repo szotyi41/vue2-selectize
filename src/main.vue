@@ -144,7 +144,7 @@ export default {
 			if (e.keyCode === 13 && this.settings.createOnEnter && this.focus && this.settings.create) {
 				e.preventDefault();
 				this.addItem(this.inputText, true);
-				this.log('Add item: ' + this.itemText);
+				this.log('Add item: ' + this.inputText);
 			}
 		});
 	},
