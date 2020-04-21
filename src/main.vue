@@ -72,11 +72,11 @@ export default {
 			var onDropdownClose = this.settings.onDropdownClose;
 			this.settings.onDropdownOpen = function($dropdown = null) {
 				$(this.$dropdown).hide().slideDown('fast').fadeIn('fast');
-				onDropdownOpen($dropdown);
+				if (onDropdownOpen) onDropdownOpen($dropdown);
 			}
 			this.settings.onDropdownClose = function($dropdown = null) {
 				$(this.$dropdown).show().slideUp('fast').fadeOut('fast');
-				onDropdownClose($dropdown);
+				if (onDropdownClose) onDropdownClose($dropdown);
 			}
 		}
 
@@ -92,7 +92,7 @@ export default {
 					'-webkit-transform': 'rotateX(90)',
 					'transform': 'rotateX(90deg)'
 				});
-				onDropdownOpen($dropdown);
+				if (onDropdownOpen) onDropdownOpen($dropdown);
 			}
 			this.settings.onDropdownClose = function($dropdown = null) {
 				$(this.$dropdown).show().css({
@@ -101,7 +101,7 @@ export default {
 					'transform': 'rotateX(0deg)',
 					'transition': 'transform 0.1s linear, background 0.15s linear, box-shadow 0.15s ease-out'
 				});
-				onDropdownClose($dropdown);
+				if (onDropdownClose) onDropdownClose($dropdown);
 			}
 		}
 
@@ -113,7 +113,7 @@ export default {
 			},
 			onChange: value => {
 				this.$emit('input', value);
-				this.settings.onChange(value);
+				if (this.settings.onChange) this.settings.onChange(value);
 			},
 			onFocus: param => {
 				this.focus = true;
@@ -140,7 +140,7 @@ export default {
 		$(this.$el).find('input').on('input', e => {
 			this.inputText = e.target.value;
 
-			// On enter
+			// Call create on enter
 			if (e.keyCode === 13 && this.settings.createOnEnter && this.focus && this.settings.create) {
 				e.preventDefault();
 				this.settings.create(this.inputText, () => {
@@ -171,6 +171,19 @@ export default {
 		},
 		disabled(value) {
 			this.toggleDisabled(value)
+		},
+		focus(value) {
+			if (value === false) {
+
+				// Call create on blur
+				if (this.settings.createOnBlur && this.settings.create) {
+					this.settings.create(this.inputText, () => {
+						this.addItem(this.inputText, true);
+						this.log('Item added: ' + this.inputText);
+					});
+					this.log('Add item: ' + this.inputText);
+				}
+			}
 		}
 	},
 	methods: {
@@ -302,9 +315,8 @@ export default {
 			});
 
 			// If option not exists add
-			if (found === true) {
-				return true;
-			}
+			if (found === true) return true;
+			
 			var option = {};
 			option[valueField] = value;
 			option[labelField] = value;
