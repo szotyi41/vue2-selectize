@@ -80,7 +80,7 @@ export default {
 	mounted() {
 		var self = this;
 
-		this.element = this.$refs.select;
+		this.$el = this.$refs.select;
 
 		// If create is bool
 		if (this.settings.create) {
@@ -119,14 +119,14 @@ export default {
 		// If its true, the user cannot remove item
 		if (this.settings.disableItemRemove) {
 			var onItemRemove = this.settings.onItemRemove;
-			this.element.selectize.onItemRemove = function(value) {
+			this.$el.selectize.onItemRemove = function(value) {
 	            selectize.setItems(val);
 	            if (onItemRemove) onItemRemove(value);
         	}
 		}
 
 		// Init selectize
-		$(this.element).selectize({
+		$(this.$el).selectize({
 			onInitialize: function() {
 				self.selectize = this;
 				self.setValue();
@@ -159,7 +159,7 @@ export default {
 		this.makeOptions(true);
 		this.toggleDisabled(this.disabled);
 
-		$(this.element).find('input').on('input', e => {
+		$(this.$el).find('input').on('input', e => {
 			this.inputText = e.target.value;
 
 			// Call create on enter
@@ -174,8 +174,8 @@ export default {
 		});
 	},
 	destroyed() {
-		if (this.element.selectize) {
-			this.element.selectize.destroy();
+		if (this.$el.selectize) {
+			this.$el.selectize.destroy();
 		}
 	},
 	watch: {
@@ -216,9 +216,9 @@ export default {
 	methods: {
 		toggleDisabled(value) {
 			if (value) {
-				this.element.selectize.disable();
+				this.$el.selectize.disable();
 			} else {
-				this.element.selectize.enable();
+				this.$el.selectize.enable();
 			}
 		},
 		makeOptions(justLocal = false) {
@@ -236,13 +236,13 @@ export default {
 			if (!equal(clean(old), clean(_new))) {
 				this.currentOptions = _new
 				if (!justLocal) {
-					this.element.selectize.clearOptions();
+					this.$el.selectize.clearOptions();
 					var optionValues = this.currentOptions.map(o => o.value)
-					Object.keys(this.element.selectize.options)
+					Object.keys(this.$el.selectize.options)
 						//IE11 fix, Object.values is not supported
-						.map(key => this.element.selectize.options[key]).filter(option => optionValues.every(v => !equal(v, option.value))).forEach(option => this.element.selectize.removeOption(option.value));
-					this.element.selectize.addOption(this.currentOptions);
-					this.element.selectize.refreshOptions(false);
+						.map(key => this.$el.selectize.options[key]).filter(option => optionValues.every(v => !equal(v, option.value))).forEach(option => this.$el.selectize.removeOption(option.value));
+					this.$el.selectize.addOption(this.currentOptions);
+					this.$el.selectize.refreshOptions(false);
 					this.setValue();
 				}
 			}
@@ -252,7 +252,7 @@ export default {
 			if (this.settings.forceAdding) {
 				this.addOptionsIfNotExists(value);
 			}
-			this.element.selectize.setValue(value, true);
+			this.$el.selectize.setValue(value, true);
 			this.log('Value Set: ' + value);
 		},
 		setOptions(options) {
@@ -263,13 +263,13 @@ export default {
 			this.disableTriggerOnChange();
 
 			// Add options, clearOptions will remove items too
-			this.element.selectize.clearOptions();
-			options.forEach(option => this.element.selectize.addOption(option));
+			this.$el.selectize.clearOptions();
+			options.forEach(option => this.$el.selectize.addOption(option));
 
 			// Set items form backup
 			this.addItems(items);
 
-			this.element.selectize.refreshOptions(false)
+			this.$el.selectize.refreshOptions(false)
 			this.setValue();
 
 			// Reload onchange event
@@ -281,7 +281,7 @@ export default {
 		addOptions(options) {
 
 			if (Array.isArray(options)) {
-				options.forEach(option => this.element.selectize.addOption(option));
+				options.forEach(option => this.$el.selectize.addOption(option));
 				return options;
 			}
 			
@@ -291,8 +291,8 @@ export default {
 
 		// Add one option
 		addOption(option) {
-			this.element.selectize.addOption(option);
-			this.element.selectize.refreshOptions(false);
+			this.$el.selectize.addOption(option);
+			this.$el.selectize.refreshOptions(false);
 			return this.options;
 		},
 		setItems(items, force = false) {
@@ -301,7 +301,7 @@ export default {
 			this.disableTriggerOnChange();
 
 			// Set items
-			this.element.selectize.clearItems();
+			this.$el.selectize.clearItems();
 			this.addItems(items, force);
 
 			// Reload onchange event
@@ -320,11 +320,11 @@ export default {
 		},
 		addItem(item, force = false) {
 			if (force) this.addOptionIfNotExists(item);
-			this.element.selectize.addItem(item);
+			this.$el.selectize.addItem(item);
 			return this.items;
 		},
 		removeItem(item) {
-			this.element.selectize.removeItem(item);
+			this.$el.selectize.removeItem(item);
 			this.setValue();
 			return this.items;
 		},
@@ -351,7 +351,7 @@ export default {
 			var option = {};
 			option[valueField] = value;
 			option[labelField] = value;
-			this.element.selectize.addOption(option);
+			this.$el.selectize.addOption(option);
 			return true;
 		},
 		addItemAsOption(option) {
@@ -359,30 +359,30 @@ export default {
 			// Find option by valueField
 			var valueField = this.settings.valueField || 'value';
 
-			this.element.selectize.addOptionIfNotExists(option);
-			this.element.selectize.addItem(option[valueField]);
+			this.$el.selectize.addOptionIfNotExists(option);
+			this.$el.selectize.addItem(option[valueField]);
 			this.setValue();
 
 			return this.items;
 		},
 		setFocus() {
-			this.element.selectize.focus();
+			this.$el.selectize.focus();
 		},
 		setBlur() {
-			this.element.selectize.blur();
+			this.$el.selectize.blur();
 		},
 		log(text) {
 			if (this.settings.debug) console.log('Selectize -- ' + text);
 		},
 		disableTriggerOnChange() {
 			this.log('On Change disabled');
-			this.element.selectize.onChange = function() {};
+			this.$el.selectize.onChange = function() {};
 			this.oldOnChange = this.settings.onChange;
 			this.triggerOnChange = false;
 		},
 		enableTriggerOnChange() {
 			this.log('On Change enabled');
-			this.element.selectize.onChange = this.oldOnChange;
+			this.$el.selectize.onChange = this.oldOnChange;
 			this.oldOnChange = function() {};
 			this.triggerOnChange = true;
 		}
