@@ -24,6 +24,7 @@
  * createOnEnter <bool> - Create will run when you press enter and text is not empty
  * createOnBlur <bool> - Create will run when you click outside and text is not empty
  * debug <bool> - Enable debug mode
+ * disableItemRemove
 
  * inputText - Text in input
  * element - Element of select
@@ -140,6 +141,7 @@ export default {
 			setItems: this.setItems,
 			addItems: this.addItems,
 			addItem: this.addItem,
+			disableItemRemove: this.disableItemRemove,
 			disableTriggerOnChange: this.disableTriggerOnChange,
 			enableTriggerOnChange: this.enableTriggerOnChange,
 			...this.settings
@@ -375,6 +377,13 @@ export default {
 			this.element.selectize.onChange = this.oldOnChange;
 			this.oldOnChange = function() {};
 			this.triggerOnChange = true;
+		},
+		disableItemRemove() {
+			var onItemRemove = this.element.selectize.onItemRemove;
+			this.element.selectize.onItemRemove = function(value) {
+	            selectize.setItems(val);
+	            onItemRemove(value);
+        	}
 		}
 	},
 	beforeUpdate() {
