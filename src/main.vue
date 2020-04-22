@@ -376,12 +376,14 @@ export default {
 		},
 		disableTriggerOnChange() {
 			this.log('On Change disabled');
+			if (this.$el.selectize)
 			this.$el.selectize.onChange = function() {};
 			this.oldOnChange = this.settings.onChange;
 			this.triggerOnChange = false;
 		},
 		enableTriggerOnChange() {
 			this.log('On Change enabled');
+			if (this.$el.selectize)
 			this.$el.selectize.onChange = this.oldOnChange;
 			this.oldOnChange = function() {};
 			this.triggerOnChange = true;
