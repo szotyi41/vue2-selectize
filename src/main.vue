@@ -116,6 +116,15 @@ export default {
 			}
 		}
 
+		// If its true, the user cannot remove item
+		if (this.settings.disableItemRemove) {
+			var onItemRemove = this.element.selectize.onItemRemove;
+			this.element.selectize.onItemRemove = function(value) {
+	            selectize.setItems(val);
+	            if (onItemRemove) onItemRemove(value);
+        	}
+		}
+
 		// Init selectize
 		$(this.element).selectize({
 			onInitialize: function() {
@@ -141,7 +150,6 @@ export default {
 			setItems: this.setItems,
 			addItems: this.addItems,
 			addItem: this.addItem,
-			disableItemRemove: this.disableItemRemove,
 			disableTriggerOnChange: this.disableTriggerOnChange,
 			enableTriggerOnChange: this.enableTriggerOnChange,
 			...this.settings
@@ -377,13 +385,6 @@ export default {
 			this.element.selectize.onChange = this.oldOnChange;
 			this.oldOnChange = function() {};
 			this.triggerOnChange = true;
-		},
-		disableItemRemove() {
-			var onItemRemove = this.element.selectize.onItemRemove;
-			this.element.selectize.onItemRemove = function(value) {
-	            selectize.setItems(val);
-	            onItemRemove(value);
-        	}
 		}
 	},
 	beforeUpdate() {

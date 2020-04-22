@@ -25,7 +25,7 @@ A [Selectize](http://selectize.github.io/selectize.js/) wrapper for VueJS 2.
  * createOnEnter <bool> - Create will run when you press enter and text is not empty
  * createOnBlur <bool> - Create will run when you click outside and text is not empty
  * debug <bool> - Enable debug mode
-
+ * disableItemRemove <bool> - Disable user can remove item with backspace, its help you make required fields
 # Variables
 
  * inputText - Text in input
