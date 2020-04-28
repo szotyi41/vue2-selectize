@@ -80,7 +80,7 @@ export default {
 	mounted() {
 		var self = this;
 
-		this.$el = this.$refs.select;
+		//this.$el = this.$refs.select;
 
 		// If create is bool
 		if (this.settings.create) {
