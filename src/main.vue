@@ -119,7 +119,7 @@ export default {
 		// If its true, the user cannot remove item
 		if (this.settings.disableItemRemove) {
 			var onItemRemove = this.settings.onItemRemove;
-			this.$el.selectize.onItemRemove = function(value) {
+			this.settings.onItemRemove = function(value) {
 	            selectize.setItems(val);
 	            if (onItemRemove) onItemRemove(value);
         	}
