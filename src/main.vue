@@ -78,16 +78,16 @@ export default {
 		}
 	},
 	mounted() {
-		var self = this;
+		let self = this;
 
 		//this.$el = this.$refs.select;
 
 		// If create is bool
 		if (this.settings.create) {
-			var create = this.settings.create;
+			let create = this.settings.create;
 			this.settings.create = function(input, callback) {
 				self.log('Create: ' + input);
-				var option = null
+				let option = null
 				if (create === true) {
 					option = {
 						text: input,
@@ -104,8 +104,8 @@ export default {
 
 		// Slide toggle
 		if (this.settings.slideToggle) {
-			var onDropdownOpen = this.settings.onDropdownOpen;
-			var onDropdownClose = this.settings.onDropdownClose;
+			let onDropdownOpen = this.settings.onDropdownOpen;
+			let onDropdownClose = this.settings.onDropdownClose;
 			this.settings.onDropdownOpen = function($dropdown = null) {
 				$(this.$dropdown).hide().slideDown('fast').fadeIn('fast');
 				if (onDropdownOpen) onDropdownOpen($dropdown);
@@ -118,7 +118,7 @@ export default {
 
 		// If its true, the user cannot remove item
 		if (this.settings.disableItemRemove) {
-			var onItemRemove = this.settings.onItemRemove;
+			let onItemRemove = this.settings.onItemRemove;
 			this.settings.onItemRemove = function(value) {
 	            selectize.setItems(val);
 	            if (onItemRemove) onItemRemove(value);
@@ -186,7 +186,7 @@ export default {
 
 			// Call onItemRemove
 			if (this.settings.onItemRemove && Array.isArray(value) && Array.isArray(old) && value.length < old.length) {
-				var removedItem = old.filter(e => !value.find(a => e == a));
+				let removedItem = old.filter(e => !value.find(a => e == a));
 				this.settings.onItemRemove(value, removedItem);
 				this.log('On item remove');
 			}
@@ -222,9 +222,9 @@ export default {
 			}
 		},
 		makeOptions(justLocal = false) {
-			var old = this.currentOptions
+			let old = this.currentOptions
 			let _new = []
-			var nodes = this.$slots.default
+			let nodes = this.$slots.default
 			if (this.settings.options === undefined && nodes) {
 				_new = nodes.filter(node => node.tag && node.tag.toLowerCase() === 'option').map(node => {
 					return {
@@ -237,7 +237,7 @@ export default {
 				this.currentOptions = _new
 				if (!justLocal) {
 					this.$el.selectize.clearOptions();
-					var optionValues = this.currentOptions.map(o => o.value)
+					let optionValues = this.currentOptions.map(o => o.value)
 					Object.keys(this.$el.selectize.options)
 						//IE11 fix, Object.values is not supported
 						.map(key => this.$el.selectize.options[key]).filter(option => optionValues.every(v => !equal(v, option.value))).forEach(option => this.$el.selectize.removeOption(option.value));
@@ -257,7 +257,7 @@ export default {
 		},
 		setOptions(options) {
 			// Save selected items before clear options (like backup)
-			var items = this.value;
+			let items = this.value;
 
 			// Disable onchange event while items readding
 			this.disableTriggerOnChange();
@@ -306,7 +306,7 @@ export default {
 
 			// Reload onchange event
 			this.enableTriggerOnChange();
-			return this.items;
+			return items;
 		},
 		addItems(items, force = false) {
 
@@ -316,26 +316,28 @@ export default {
 			}
 
 			this.addItem(items, force);
-			return this.items;
+			return items;
 		},
-		addItem(item, force = false) {
-			if (force) this.addOptionIfNotExists(item);
-			this.$el.selectize.addItem(item);
-			return this.items;
+		addItem(value, force = false) {
+			if (force) this.addOptionIfNotExists(value);
+			value = getValueFromOptions(value);
+			this.$el.selectize.addItem(value);
+			return [value];
 		},
-		removeItem(item) {
-			this.$el.selectize.removeItem(item);
+		removeItem(value) {
+			value = getValueFromOptions(value);
+			this.$el.selectize.removeItem(value);
 			this.setValue();
-			return this.items;
+			return value;
 		},
 		addOptionsIfNotExists(values) {
 			values.forEach(value => this.addOptionIfNotExists(value));
-			return this.options;
+			return values;
 		},
 		addOptionIfNotExists(value) {
-			var found = false;
-			var valueField = this.settings.valueField || 'value';
-			var labelField = this.settings.labelField || 'text';
+			let found = false;
+			let valueField = this.settings.valueField || 'value';
+			let labelField = this.settings.labelField || 'text';
 
 			// Find by value
 			this.currentOptions.forEach(function(option) {
@@ -346,24 +348,24 @@ export default {
 			});
 
 			// If option not exists add
-			if (found === true) return true;
+			if (found === true) return value;
 
-			var option = {};
+			let option = {};
 			option[valueField] = value;
 			option[labelField] = value;
 			this.$el.selectize.addOption(option);
-			return true;
+			return value;
 		},
 		addItemAsOption(option) {
 
 			// Find option by valueField
-			var valueField = this.settings.valueField || 'value';
+			let valueField = this.settings.valueField || 'value';
 
 			this.$el.selectize.addOptionIfNotExists(option);
 			this.$el.selectize.addItem(option[valueField]);
 			this.setValue();
 
-			return this.items;
+			return option;
 		},
 		setFocus() {
 			this.$el.selectize.focus();
@@ -387,6 +389,30 @@ export default {
 			this.$el.selectize.onChange = this.oldOnChange;
 			this.oldOnChange = function() {};
 			this.triggerOnChange = true;
+		},
+		// As value you can push a string and option object
+		// If its string check is in options
+		// If its object get the value
+		getValueFromOptions(value) {
+			// Check value is an object
+			let valueField = this.settings.valueField || 'value';
+			if (typeof value === 'object') {
+
+				// Check value field is exists
+				if (!value[valueField]) {
+					this.log('Item is object, but ' + valueField + ' field is not exists in ' + JSON.stringify(value));
+				}
+
+				return value[valueField];
+			}
+
+			// Check option is exists
+			if (!this.currentOptions.find(option => option[valueField] == value)) {
+				this.log('Item not exists in options with value ' + value);
+				return value;
+			}
+
+			return value;
 		}
 	},
 	beforeUpdate() {
