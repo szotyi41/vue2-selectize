@@ -320,12 +320,12 @@ export default {
 		},
 		addItem(value, force = false) {
 			if (force) this.addOptionIfNotExists(value);
-			value = getValueFromOptions(value);
+			value = this.getValueFromOptions(value);
 			this.$el.selectize.addItem(value);
 			return [value];
 		},
 		removeItem(value) {
-			value = getValueFromOptions(value);
+			value = this.getValueFromOptions(value);
 			this.$el.selectize.removeItem(value);
 			this.setValue();
 			return value;
