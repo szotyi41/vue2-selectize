@@ -86,8 +86,8 @@ export default {
 		if (this.settings.create) {
 			let create = this.settings.create;
 			this.settings.create = function(input, callback) {
-				this.log('Create: ' + input);
-				this.log('Dataset: ' + JSON.stringify(this));
+				self.log('Create: ' + input);
+				self.log('Dataset: ' + JSON.stringify(this));
 				console.log(this.$refs.select);
 				let option = null
 				if (create === true) {
@@ -98,7 +98,7 @@ export default {
 				} else {
 					option = create(input, callback, this);
 				}
-				this.createdOptions.push(option);
+				self.createdOptions.push(option);
 				return option;
 			}
 
