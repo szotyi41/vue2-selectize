@@ -85,8 +85,9 @@ export default {
 		// If create is bool
 		if (this.settings.create) {
 			let create = this.settings.create;
-			this.settings.create = function(input, callback) {
-				self.log('Create: ' + input);
+			this.settings.create = (input, callback) => {
+				this.log('Create: ' + input);
+				this.log('Dataset: ' + this.$el.dataset);
 				let option = null
 				if (create === true) {
 					option = {
@@ -94,9 +95,9 @@ export default {
 						value: input
 					}
 				} else {
-					option = create(input, callback, self);
+					option = create(input, callback, this);
 				}
-				self.createdOptions.push(option);
+				this.createdOptions.push(option);
 				return option;
 			}
 
