@@ -87,8 +87,7 @@ export default {
 			let create = this.settings.create;
 			this.settings.create = function(input, callback) {
 				self.log('Create: ' + input);
-				self.log('Dataset: ' + JSON.stringify(this));
-				console.log(this.$refs.select);
+				console.log(this);
 				let option = null
 				if (create === true) {
 					option = {
