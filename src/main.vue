@@ -396,7 +396,7 @@ export default {
 		getValueFromOptions(value) {
 			// Check value is an object
 			let valueField = this.settings.valueField || 'value';
-			if (typeof value === 'object') {
+			if (!Array.isArray(value)) {
 
 				// Check value field is exists
 				if (!value[valueField]) {
