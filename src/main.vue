@@ -86,9 +86,7 @@ export default {
 		if (this.settings.create) {
 			let create = this.settings.create;
 			this.settings.create = function(input, callback) {
-				if (this === undefined) return;
 				self.log('Create: ' + input);
-				console.log(this);
 				let option = null
 				if (create === true) {
 					option = {
