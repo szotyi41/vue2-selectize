@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rhyek/vue2-selectize.git"
+    "url": "git+https://github.com/szotyi41/vue2-selectize.git"
   },
   "keywords": [
     "vue",
@@ -18,12 +18,12 @@
     "selectize",
     "select"
   ],
-  "author": "https://github.com/rhyek",
+  "author": "https://github.com/szotyi41",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/rhyek/vue2-selectize/issues"
+    "url": "https://github.com/szotyi41/vue2-selectize/issues"
   },
-  "homepage": "https://github.com/rhyek/vue2-selectize#readme",
+  "homepage": "https://github.com/szotyi41/vue2-selectize#readme",
   "devDependencies": {
     "babel-core": "^6.23.1",
     "babel-loader": "^6.3.2",
@@ -35,6 +35,6 @@
   },
   "dependencies": {
     "deep-equal": "^1.0.1",
-    "selectize": "^0.12.4"
+    "selectize": "^0.12.6"
   }
 }
