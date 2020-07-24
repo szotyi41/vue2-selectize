@@ -69,9 +69,7 @@ export default {
 	},
 	watch: {
 		value: function(value) {
-			console.log(value, this.settings.createIfNotExists);
 			if (this.settings.createIfNotExists) {
-
 				if (Array.isArray(value)) this.addOptionsIfNotExists(value);
 				else this.addOptionIfNotExists(value);
 			}
@@ -119,13 +117,24 @@ export default {
 		if (this.settings.slideToggle) {
 			let onDropdownOpen = this.settings.onDropdownOpen;
 			let onDropdownClose = this.settings.onDropdownClose;
-			this.settings.onDropdownOpen = function(dropdown = null) {
-				console.error(this, dropdown);
-				if (onDropdownOpen) onDropdownOpen(dropdown);
+			this.settings.onDropdownOpen = function($dropdown = null) {
+				if (self.element) {
+					let dropdownElement = $(self.element).find('.selectize-dropdown');
+					if (dropdownElement) {
+						dropdownElement.hide().slideDown('fast').fadeIn('fast');
+					}
+				}
+				if (onDropdownOpen) onDropdownOpen($dropdown);
 			}
-			this.settings.onDropdownClose = function(dropdown = null) {
-				console.error(this, dropdown);
-				if (onDropdownClose) onDropdownClose(dropdown);
+			this.settings.onDropdownClose = function($dropdown = null) {
+
+				if (self.element) {
+					let dropdownElement = $(self.element).find('.selectize-dropdown');
+					if (dropdownElement) {
+						dropdownElement.show().slideUp('fast').fadeOut('fast');
+					}
+				}
+				if (onDropdownClose) onDropdownClose($dropdown);
 			}
 		}
 
