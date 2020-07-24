@@ -23,6 +23,7 @@
  * addItemAsOption <function (option)> - Add item (param will option not item) Option has value and text field
  * createOnEnter <bool> - Create will run when you press enter and text is not empty
  * createOnBlur <bool> - Create will run when you click outside and text is not empty
+ * createIfNotExists <bool> - If push something in the model and not exists
  * debug <bool> - Enable debug mode
  * disableItemRemove
 
@@ -64,6 +65,14 @@ export default {
 		},
 		options: {
 			type: Array
+		}
+	},
+	watch: {
+		value: function(value) {
+			if (this.settings.createIfNotExists) {
+				if (Array.isArray(value)) this.addOptionsIfNotExists(value);
+				else this.addOptionIfNotExists(value);
+			}
 		}
 	},
 	data() {
@@ -109,13 +118,11 @@ export default {
 			let onDropdownOpen = this.settings.onDropdownOpen;
 			let onDropdownClose = this.settings.onDropdownClose;
 			this.settings.onDropdownOpen = function($dropdown = null) {
-				if (this.$dropdown)
-				$(this.$dropdown).hide().slideDown('fast').fadeIn('fast');
+				if (this.$dropdown) $(this.$dropdown).hide().slideDown('fast').fadeIn('fast');
 				if (onDropdownOpen) onDropdownOpen($dropdown);
 			}
 			this.settings.onDropdownClose = function($dropdown = null) {
-				if (this.$dropdown)
-				$(this.$dropdown).show().slideUp('fast').fadeOut('fast');
+				if (this.$dropdown) $(this.$dropdown).show().slideUp('fast').fadeOut('fast');
 				if (onDropdownClose) onDropdownClose($dropdown);
 			}
 		}
