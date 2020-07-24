@@ -1,9 +1,8 @@
-<template> 
+<template>
 	<select ref="select"><slot/></select>
-</template> 
+</template>
 
 <script>
-
 /*
  * slideToggle <bool> - If its true the options will slide
  * disableTriggerOnChange <function> - If its called the onChange event will not called anymore
@@ -37,7 +36,7 @@ import $ from 'jquery';
 import equal from 'deep-equal';
 
 if (!$().selectize) {
-	require('selectize')
+	require('selectize');
 }
 
 function clean(options) {
@@ -67,21 +66,6 @@ export default {
 			type: Array
 		}
 	},
-	watch: {
-		value: function(value) {
-			console.log('valchange', value, this.settings.createIfNotExists);
-			if (this.settings.createIfNotExists) {
-				if (Array.isArray(value)) 
-				{
-					this.addOptionsIfNotExists(value);
-				} 
-				else 
-				{
-					this.addOptionIfNotExists(value);
-				}
-			}
-		}
-	},
 	data() {
 		return {
 			element: {},
@@ -91,7 +75,7 @@ export default {
 			focus: false,
 			inputText: '',
 			items: []
-		}
+		};
 	},
 	mounted() {
 		let self = this;
@@ -99,25 +83,23 @@ export default {
 		this.element = this.$refs.select;
 		this.log('Element initialized', this.element);
 
-
 		// If create is bool
 		if (this.settings.create) {
 			let create = this.settings.create;
 			this.settings.create = function(input, callback) {
 				self.log('Create: ' + input);
-				let option = null
+				let option = null;
 				if (create === true) {
 					option = {
 						text: input,
 						value: input
-					}
+					};
 				} else {
 					option = create(input, callback, this);
 				}
 				self.createdOptions.push(option);
 				return option;
-			}
-
+			};
 		}
 
 		// Slide toggle
@@ -128,30 +110,35 @@ export default {
 				if (self.element) {
 					let dropdownElement = $(self.element).find('.selectize-dropdown');
 					if (dropdownElement) {
-						dropdownElement.hide().slideDown('fast').fadeIn('fast');
+						dropdownElement
+							.hide()
+							.slideDown('fast')
+							.fadeIn('fast');
 					}
 				}
 				if (onDropdownOpen) onDropdownOpen($dropdown);
-			}
+			};
 			this.settings.onDropdownClose = function($dropdown = null) {
-
 				if (self.element) {
 					let dropdownElement = $(self.element).find('.selectize-dropdown');
 					if (dropdownElement) {
-						dropdownElement.show().slideUp('fast').fadeOut('fast');
+						dropdownElement
+							.show()
+							.slideUp('fast')
+							.fadeOut('fast');
 					}
 				}
 				if (onDropdownClose) onDropdownClose($dropdown);
-			}
+			};
 		}
 
 		// If its true, the user cannot remove item
 		if (this.settings.disableItemRemove) {
 			let onItemRemove = this.settings.onItemRemove;
 			this.settings.onItemRemove = function(value) {
-	            selectize.setItems(val);
-	            if (onItemRemove) onItemRemove(value);
-        	}
+				selectize.setItems(val);
+				if (onItemRemove) onItemRemove(value);
+			};
 		}
 
 		// Init selectize
@@ -182,25 +169,27 @@ export default {
 			disableTriggerOnChange: this.disableTriggerOnChange,
 			enableTriggerOnChange: this.enableTriggerOnChange,
 			...this.settings
-		})
+		});
 
 		// At init
 		this.makeOptions(true);
 		this.toggleDisabled(this.disabled);
 
-		$(this.element).find('input').on('input', e => {
-			this.inputText = e.target.value;
+		$(this.element)
+			.find('input')
+			.on('input', e => {
+				this.inputText = e.target.value;
 
-			// Call create on enter
-			if (this.inputText.length && this.settings.createOnEnter && e.keyCode === 13 && this.focus && this.settings.create) {
-				e.preventDefault();
-				this.settings.create(this.inputText, () => {
-					this.addItem(this.inputText, true);
-					this.log('Item added: ' + this.inputText);
-				});
-				this.log('Add item: ' + this.inputText);
-			}
-		});
+				// Call create on enter
+				if (this.inputText.length && this.settings.createOnEnter && e.keyCode === 13 && this.focus && this.settings.create) {
+					e.preventDefault();
+					this.settings.create(this.inputText, () => {
+						this.addItem(this.inputText, true);
+						this.log('Item added: ' + this.inputText);
+					});
+					this.log('Add item: ' + this.inputText);
+				}
+			});
 	},
 	destroyed() {
 		if (this.element.selectize) {
@@ -221,11 +210,10 @@ export default {
 			}
 		},
 		disabled(disabled) {
-			this.toggleDisabled(disabled)
+			this.toggleDisabled(disabled);
 		},
 		focus(focus) {
 			if (focus === false) {
-
 				// Call create on blur
 				if (this.inputText.length && this.settings.createOnBlur && this.settings.create) {
 					this.settings.create(this.inputText, () => {
@@ -251,25 +239,30 @@ export default {
 			}
 		},
 		makeOptions(justLocal = false) {
-			let old = this.currentOptions
-			let _new = []
-			let nodes = this.$slots.default
+			let old = this.currentOptions;
+			let _new = [];
+			let nodes = this.$slots.default;
 			if (this.settings.options === undefined && nodes) {
-				_new = nodes.filter(node => node.tag && node.tag.toLowerCase() === 'option').map(node => {
-					return {
-						text: node.children ? node.children[0].text.trim() : null,
-						value: node.data.domProps ? node.data.domProps.value : node.data.attrs.value
-					}
-				}).concat(this.createdOptions)
+				_new = nodes
+					.filter(node => node.tag && node.tag.toLowerCase() === 'option')
+					.map(node => {
+						return {
+							text: node.children ? node.children[0].text.trim() : null,
+							value: node.data.domProps ? node.data.domProps.value : node.data.attrs.value
+						};
+					})
+					.concat(this.createdOptions);
 			}
 			if (!equal(clean(old), clean(_new))) {
-				this.currentOptions = _new
+				this.currentOptions = _new;
 				if (!justLocal) {
 					this.element.selectize.clearOptions();
-					let optionValues = this.currentOptions.map(o => o.value)
+					let optionValues = this.currentOptions.map(o => o.value);
 					Object.keys(this.element.selectize.options)
 						//IE11 fix, Object.values is not supported
-						.map(key => this.element.selectize.options[key]).filter(option => optionValues.every(v => !equal(v, option.value))).forEach(option => this.element.selectize.removeOption(option.value));
+						.map(key => this.element.selectize.options[key])
+						.filter(option => optionValues.every(v => !equal(v, option.value)))
+						.forEach(option => this.element.selectize.removeOption(option.value));
 					this.element.selectize.addOption(this.currentOptions);
 					this.element.selectize.refreshOptions(false);
 					this.setValue();
@@ -279,7 +272,11 @@ export default {
 		setValue(value) {
 			if (!value) value = this.value;
 			if (this.settings.forceAdding) {
-				this.addOptionsIfNotExists(value);
+				if (Array.isArray(value)) {
+					this.addOptionsIfNotExists(value);
+				} else {
+					this.addOptionIfNotExists(value);
+				}
 			}
 			this.element.selectize.setValue(value, true);
 			this.log('Value Set: ' + value);
@@ -298,7 +295,7 @@ export default {
 			// Set items form backup
 			this.addItems(items);
 
-			this.element.selectize.refreshOptions(false)
+			this.element.selectize.refreshOptions(false);
 			this.setValue();
 
 			// Reload onchange event
@@ -306,14 +303,13 @@ export default {
 			return this.options;
 		},
 
-		// Add options if array 
+		// Add options if array
 		addOptions(options) {
-
 			if (Array.isArray(options)) {
 				options.forEach(option => this.element.selectize.addOption(option));
 				return options;
 			}
-			
+
 			this.addOption(options);
 			return this.options;
 		},
@@ -325,7 +321,6 @@ export default {
 			return this.options;
 		},
 		setItems(items, force = false) {
-
 			// Disable onchange event while items readding
 			this.disableTriggerOnChange();
 
@@ -338,7 +333,6 @@ export default {
 			return items;
 		},
 		addItems(items, force = false) {
-
 			if (Array.isArray(items)) {
 				items.forEach(item => this.addItem(items));
 				return items;
@@ -360,7 +354,11 @@ export default {
 			return value;
 		},
 		addOptionsIfNotExists(values) {
-			values.forEach(value => this.addOptionIfNotExists(value));
+			if (Array.isArray(value)) {
+				values.forEach(value => this.addOptionIfNotExists(value));
+			} else {
+				return this.addOptionIfNotExists(values);
+			}
 			return values;
 		},
 		addOptionIfNotExists(value) {
@@ -368,9 +366,16 @@ export default {
 			let valueField = this.settings.valueField || 'value';
 			let labelField = this.settings.labelField || 'text';
 
+			// Check value is not empty
+			if (!value && !value.trim()) {
+				this.log('Value is empty when adding option');
+				return;
+			}
+
 			// Find by value
 			this.currentOptions.forEach(function(option) {
 				if (option[valueField] === value) {
+					this.log('Value is already added to options');
 					found = true;
 					return;
 				}
@@ -386,7 +391,6 @@ export default {
 			return value;
 		},
 		addItemAsOption(option) {
-
 			// Find option by valueField
 			let valueField = this.settings.valueField || 'value';
 
@@ -407,15 +411,13 @@ export default {
 		},
 		disableTriggerOnChange() {
 			this.log('On Change disabled');
-			if (this.element.selectize)
-			this.element.selectize.onChange = function() {};
+			if (this.element.selectize) this.element.selectize.onChange = function() {};
 			this.oldOnChange = this.settings.onChange;
 			this.triggerOnChange = false;
 		},
 		enableTriggerOnChange() {
 			this.log('On Change enabled');
-			if (this.element.selectize)
-			this.element.selectize.onChange = this.oldOnChange;
+			if (this.element.selectize) this.element.selectize.onChange = this.oldOnChange;
 			this.oldOnChange = function() {};
 			this.triggerOnChange = true;
 		},
@@ -426,7 +428,6 @@ export default {
 			// Check value is an object
 			let valueField = this.settings.valueField || 'value';
 			if (!Array.isArray(value)) {
-
 				// Check value field is exists
 				if (!value[valueField]) {
 					this.log('Item is object, but ' + valueField + ' field is not exists in ' + JSON.stringify(value));
@@ -447,5 +448,5 @@ export default {
 	beforeUpdate() {
 		this.makeOptions();
 	}
-} 
+};
 </script>
