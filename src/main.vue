@@ -118,12 +118,12 @@ export default {
 			let onDropdownOpen = this.settings.onDropdownOpen;
 			let onDropdownClose = this.settings.onDropdownClose;
 			this.settings.onDropdownOpen = function(dropdown = null) {
-				console.log(this, dropdown);
+				console.error(this, dropdown);
 				//if (this.$dropdown) $(this.$dropdown).hide().slideDown('fast').fadeIn('fast');
 				if (onDropdownOpen) onDropdownOpen(dropdown);
 			}
 			this.settings.onDropdownClose = function(dropdown = null) {
-				console.log(this, dropdown);
+				console.error(this, dropdown);
 				//if (this.$dropdown) $(this.$dropdown).show().slideUp('fast').fadeOut('fast');
 				if (onDropdownClose) onDropdownClose(dropdown);
 			}
