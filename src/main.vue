@@ -69,9 +69,16 @@ export default {
 	},
 	watch: {
 		value: function(value) {
+			console.log('valchange', value, this.settings.createIfNotExists);
 			if (this.settings.createIfNotExists) {
-				if (Array.isArray(value)) this.addOptionsIfNotExists(value);
-				else this.addOptionIfNotExists(value);
+				if (Array.isArray(value)) 
+				{
+					this.addOptionsIfNotExists(value);
+				} 
+				else 
+				{
+					this.addOptionIfNotExists(value);
+				}
 			}
 		}
 	},
