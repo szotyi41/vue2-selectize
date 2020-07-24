@@ -69,8 +69,9 @@ export default {
 	},
 	watch: {
 		value: function(value) {
+			console.log(value, this.settings.createIfNotExists);
 			if (this.settings.createIfNotExists) {
-				console.log(value);
+
 				if (Array.isArray(value)) this.addOptionsIfNotExists(value);
 				else this.addOptionIfNotExists(value);
 			}
