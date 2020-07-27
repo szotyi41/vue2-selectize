@@ -443,6 +443,17 @@ export default {
 			}
 
 			return value;
+		},
+
+		setOptionGroups(optgroups) {
+			var self = this;
+			var optgroupId = self.settings.optgroupValueField || 'id';
+			if (Array.isArray(optgroups)) {
+				self.selectize.clearOptionGroups();
+				optgroups.forEach(function(optgroup) {
+					self.selectize.addOptionGroup(optgroup[optgroupId], optgroup);
+				});
+			}
 		}
 	},
 	beforeUpdate() {
