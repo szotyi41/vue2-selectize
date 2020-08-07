@@ -316,6 +316,15 @@ export default {
 
 		// Add one option
 		addOption(option) {
+			let valueField = this.settings.valueField || 'value';
+			let labelField = this.settings.labelField || 'text';
+			let findOldOption = this.element.selectize.options.find(oldOption => oldOption[valueField] === option[valueField]);
+
+			// If option is already added, remove it to overwrite
+			if (findOldOption) {
+				this.element.selectize.removeOption(findOldOption[valueField]);
+			}
+
 			this.element.selectize.addOption(option);
 			this.element.selectize.refreshOptions(false);
 			return this.options;
