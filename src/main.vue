@@ -234,7 +234,7 @@ export default {
 		},
 
 		// Options from props
-		options(options) {
+		options(options = [], oldoptions = []) {
 			this.setOptions(options);
 		}
 	},
@@ -302,8 +302,10 @@ export default {
 			// Disable onchange event while items readding
 			this.disableTriggerOnChange();
 
-			// Add options, clearOptions will remove items too
+			// clearOptions will remove items too
 			this.element.selectize.clearOptions();
+
+			// Add options again
 			options.forEach(option => this.element.selectize.addOption(option));
 
 			// Set items form backup
@@ -336,6 +338,9 @@ export default {
 				this.lastOptions = this.currentOptions;
 			}
 
+			this.element.selectize.refreshOptions(false);
+			this.setValue();
+
 			return this.currentOptions;
 		},
 
@@ -357,6 +362,9 @@ export default {
 			if (this.currentOptions && this.currentOptions.length) {
 				this.lastOptions = this.currentOptions;
 			}
+
+			this.element.selectize.refreshOptions(false);
+			this.setValue();
 
 			return this.currentOptions;
 		},
