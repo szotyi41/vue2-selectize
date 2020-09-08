@@ -30,6 +30,8 @@
  * element - Element of select
  * options - Options array
  * focus - If focused
+
+ * v2.0
  */
 
 import $ from 'jquery';
