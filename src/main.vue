@@ -106,7 +106,7 @@ export default {
 				self.log('Items:');
 				self.log(self.value);
 
-				if (self.selectOnlyOneItem === true && self.itemsvalue && self.value.length) {
+				if (self.selectOnlyOneItem === true && self.value && self.value.length) {
 					return;
 				}
 
