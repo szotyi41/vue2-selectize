@@ -109,6 +109,11 @@ export default {
 			let onDropdownOpen = this.settings.onDropdownOpen;
 			let onDropdownClose = this.settings.onDropdownClose;
 			this.settings.onDropdownOpen = function($dropdown = null) {
+
+				if (this.settings.selectOnlyOneItem && this.items && this.items.length) {
+					return;
+				}
+
 				if (self.element) {
 					let dropdownElement = $(self.element).find('.selectize-dropdown');
 					if (dropdownElement) {
@@ -393,10 +398,6 @@ export default {
 				this.addOptionIfNotExists(value);
 			}
 
-			if (this.settings.selectOnlyOneItem === true) {
-				this.removeAllOptionsExcept(items);
-			}
-
 			// Search value from options
 			value = this.getValueFromOptions(value);
 
@@ -433,6 +434,7 @@ export default {
 
 			});
 
+			// Filter options, if removeIds not found in options
 			var optionsAfterFilter = this.currentOptions.filter(option => optionToRemoveIds.indexOf(option[valueField]) === -1);
 			
 
@@ -473,10 +475,10 @@ export default {
 
 			if (Array.isArray(value)) {
 				values.forEach(value => this.addOptionIfNotExists(value));
-			} else {
-				return this.addOptionIfNotExists(values);
+				return this.currentOptions;
 			}
-			return values;
+
+			return this.addOptionIfNotExists(values);
 		},
 		addOptionIfNotExists(value) {
 			let found = false;
@@ -501,21 +503,29 @@ export default {
 			// If option not exists add
 			if (found === true) return value;
 
+			// Set option values
 			let option = {};
 			option[valueField] = value;
 			option[labelField] = value;
+
+			// Add option to selectize
 			this.element.selectize.addOption(option);
-			return value;
+
+			return this.currentOptions;
 		},
 		addItemAsOption(option) {
 			// Find option by valueField
 			let valueField = this.settings.valueField || 'value';
 
-			this.element.selectize.addOptionIfNotExists(option);
+			// Add option
+			this.addOptionIfNotExists(option);
+
+			// Add item to selectize
 			this.element.selectize.addItem(option[valueField]);
+
 			this.setValue();
 
-			return option;
+			return this.currentOptions;
 		},
 		setFocus() {
 			this.element.selectize.focus();
