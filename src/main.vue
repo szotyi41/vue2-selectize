@@ -306,7 +306,11 @@ export default {
 			this.element.selectize.clearOptions();
 
 			// Add options again
-			options.forEach(option => this.element.selectize.addOption(option));
+			if (Array.isArray(options)) {
+				options.forEach(option => this.addOption(option));
+			} else {
+				this.addOption(option);
+			}
 
 			// Set items form backup
 			this.addItems(items);
