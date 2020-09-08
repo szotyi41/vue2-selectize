@@ -74,7 +74,9 @@ export default {
 			createdOptions: [],
 			focus: false,
 			inputText: '',
-			items: []
+			items: [],
+			options: [],
+			lastOptions: []
 		};
 	},
 	mounted() {
@@ -168,6 +170,7 @@ export default {
 			addItem: this.addItem,
 			disableTriggerOnChange: this.disableTriggerOnChange,
 			enableTriggerOnChange: this.enableTriggerOnChange,
+			selectOnlyOneItem: this.selectOnlyOneItem,
 			...this.settings
 		});
 
@@ -269,9 +272,9 @@ export default {
 				}
 			}
 		},
-		setValue(value) {
+		setValue(value, forceAdding = false) {
 			if (!value) value = this.value;
-			if (this.settings.forceAdding) {
+			if (this.settings.forceAdding || forceAdding === true) {
 				if (Array.isArray(value)) {
 					this.addOptionsIfNotExists(value);
 				} else {
@@ -281,9 +284,15 @@ export default {
 			this.element.selectize.setValue(value, true);
 			this.log('Value Set: ' + value);
 		},
+		clearOptions() {
+			return this.setOptions([]);
+		},
 		setOptions(options) {
 			// Save selected items before clear options (like backup)
 			let items = this.value;
+
+			// Set options value
+			this.options = options;
 
 			// Disable onchange event while items readding
 			this.disableTriggerOnChange();
@@ -298,6 +307,11 @@ export default {
 			this.element.selectize.refreshOptions(false);
 			this.setValue();
 
+			// Set last options, if more than 1
+			if (this.options && this.options.length) {
+				this.lastOptions = this.options;
+			}
+
 			// Reload onchange event
 			this.enableTriggerOnChange();
 			return this.options;
@@ -311,6 +325,12 @@ export default {
 			}
 
 			this.addOption(options);
+
+			// Set last options, if more than 1
+			if (this.options && this.options.length > 1) {
+				this.lastOptions = this.options;
+			}
+
 			return this.options;
 		},
 
@@ -318,6 +338,12 @@ export default {
 		addOption(option) {
 			this.element.selectize.addOption(option);
 			this.element.selectize.refreshOptions(false);
+
+			// Set last options, if more than 1
+			if (this.options && this.options.length > 1) {
+				this.lastOptions = this.options;
+			}
+
 			return this.options;
 		},
 		setItems(items, force = false) {
@@ -328,23 +354,49 @@ export default {
 			this.element.selectize.clearItems();
 			this.addItems(items, force);
 
+
 			// Reload onchange event
 			this.enableTriggerOnChange();
-			return items;
+
+			return this.items;
 		},
 		addItems(items, force = false) {
+
+			// If its array each in items
 			if (Array.isArray(items)) {
+
+				// Each in items and push it
 				items.forEach(item => this.addItem(items));
-				return items;
+
+				// Generated in addItem functon
+				return this.items;
 			}
 
+			// If its object insert it
 			this.addItem(items, force);
-			return items;
+
+
+			return this.items;
 		},
 		addItem(value, force = false) {
-			if (force) this.addOptionIfNotExists(value);
+
+			if (force) {
+				this.addOptionIfNotExists(value);
+			}
+
+			if (this.settings.selectOnlyOneItem === true) {
+				this.removeAllOptionsExcept(items);
+			}
+
+			// Search value from options
 			value = this.getValueFromOptions(value);
+
+			// Add item to selectize
 			this.element.selectize.addItem(value);
+
+			// Set component variable
+			this.items = this.items.concat(value);
+
 			return [value];
 		},
 		removeItem(value) {
@@ -353,7 +405,63 @@ export default {
 			this.setValue();
 			return value;
 		},
+		removeAllOptionsExcept(notRemovableOptions) {
+			let valueField = this.settings.valueField || 'value';
+			let labelField = this.settings.labelField || 'text';
+
+			// Convert remove options to array
+			notRemovableOptions = Array.isArray(notRemovableOptions) ? notRemovableOptions : [notRemovableOptions];
+
+			var notRemovableOptionIds = notRemovableOptions.map(option => {
+
+				// If option is object, get valueField
+				if (typeof option === 'object' && !Array.isArray(option)) {
+					return option[valueField];
+				}
+
+				// If its string or int or bool
+				return option;
+
+			});
+
+			var optionsAfterFilter = this.options.filter(option => optionToRemoveIds.indexOf(option[valueField]) === -1);
+			
+
+			// Set filtered options
+			this.setOptions(optionsAfterFilter);
+
+			return this.options;
+
+		},
+		removeOptions(removeOptions) {
+			let valueField = this.settings.valueField || 'value';
+			let labelField = this.settings.labelField || 'text';
+
+			// Convert remove options to array
+			removeOptions = Array.isArray(removeOptions) ? removeOptions : [removeOptions];
+
+			var optionToRemoveIds = removeOptions.map(option => {
+
+				// If option is object, get valueField
+				if (typeof option === 'object' && !Array.isArray(option)) {
+					return option[valueField];
+				}
+
+				// If its string or int or bool
+				return option;
+
+			});
+
+			// Filter options
+			var optionsAfterFilter = this.options.filter(option => optionToRemoveIds.indexOf(option[valueField]) !== -1);
+
+			// Set filtered options
+			this.setOptions(optionsAfterFilter);
+
+			return this.options;
+		},
 		addOptionsIfNotExists(values) {
+
 			if (Array.isArray(value)) {
 				values.forEach(value => this.addOptionIfNotExists(value));
 			} else {
