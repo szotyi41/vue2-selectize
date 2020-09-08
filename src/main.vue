@@ -266,9 +266,9 @@ export default {
 				if (!justLocal) {
 					this.element.selectize.clearOptions();
 					let optionValues = this.currentOptions.map(o => o.value);
-					Object.keys(this.element.selectize.options)
+					Object.keys(this.currentOptions)
 						//IE11 fix, Object.values is not supported
-						.map(key => this.element.selectize.options[key])
+						.map(key => this.currentOptions[key])
 						.filter(option => optionValues.every(v => !equal(v, option.value)))
 						.forEach(option => this.element.selectize.removeOption(option.value));
 					this.element.selectize.addOption(this.currentOptions);
