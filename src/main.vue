@@ -25,29 +25,22 @@
  * createIfNotExists <bool> - If push something in the model and not exists
  * debug <bool> - Enable debug mode
  * disableItemRemove
-
  * inputText - Text in input
  * element - Element of select
  * options - Options array
  * focus - If focused
-
- * v2.0
  */
-
 import $ from 'jquery';
 import equal from 'deep-equal';
-
 if (!$().selectize) {
 	require('selectize');
 }
-
 function clean(options) {
 	return options.map(option => ({
 		text: option.text,
 		value: option.value
 	}));
 }
-
 export default {
 	props: {
 		value: {
@@ -65,8 +58,7 @@ export default {
 			default: false
 		},
 		options: {
-			type: Array,
-			default: []
+			type: Array
 		}
 	},
 	data() {
@@ -78,17 +70,13 @@ export default {
 			focus: false,
 			inputText: '',
 			items: [],
-			currentItems: [],
-			options: [],
-			lastOptions: []
+			selectOnlyOneItem: false
 		};
 	},
 	mounted() {
 		let self = this;
-
 		this.element = this.$refs.select;
 		this.log('Element initialized', this.element);
-
 		// If create is bool
 		if (this.settings.create) {
 			let create = this.settings.create;
@@ -107,7 +95,6 @@ export default {
 				return option;
 			};
 		}
-
 		// Slide toggle
 		if (this.settings.slideToggle) {
 			let onDropdownOpen = this.settings.onDropdownOpen;
@@ -115,10 +102,9 @@ export default {
 			this.settings.onDropdownOpen = function($dropdown = null) {
 
 
-				console.log('select only one:', this.settings.selectOnlyOneItem);
 				console.log(this.items);
 
-				if (this.settings.selectOnlyOneItem && this.items && this.items.length) {
+				if (this.selectOnlyOneItem === true && this.items && this.items.length) {
 					return;
 				}
 
@@ -146,7 +132,6 @@ export default {
 				if (onDropdownClose) onDropdownClose($dropdown);
 			};
 		}
-
 		// If its true, the user cannot remove item
 		if (this.settings.disableItemRemove) {
 			let onItemRemove = this.settings.onItemRemove;
@@ -155,7 +140,6 @@ export default {
 				if (onItemRemove) onItemRemove(value);
 			};
 		}
-
 		// Init selectize
 		$(this.element).selectize({
 			onInitialize: function() {
@@ -183,21 +167,15 @@ export default {
 			addItem: this.addItem,
 			disableTriggerOnChange: this.disableTriggerOnChange,
 			enableTriggerOnChange: this.enableTriggerOnChange,
-			selectOnlyOneItem: this.selectOnlyOneItem,
-			removeOptions: this.removeOptions,
-			removeAllOptionsExcept: this.removeAllOptionsExcept,
 			...this.settings
 		});
-
 		// At init
 		this.makeOptions(true);
 		this.toggleDisabled(this.disabled);
-
 		$(this.element)
 			.find('input')
 			.on('input', e => {
 				this.inputText = e.target.value;
-
 				// Call create on enter
 				if (this.inputText.length && this.settings.createOnEnter && e.keyCode === 13 && this.focus && this.settings.create) {
 					e.preventDefault();
@@ -219,7 +197,6 @@ export default {
 			if (!equal(value, old)) {
 				this.setValue();
 			}
-
 			// Call onItemRemove
 			if (this.settings.onItemRemove && Array.isArray(value) && Array.isArray(old) && value.length < old.length) {
 				let removedItem = old.filter(e => !value.find(a => e == a));
@@ -242,11 +219,10 @@ export default {
 				}
 			}
 		},
-
 		// Options from props
-		options(options = [], oldoptions = []) {
+		options(options) {
 			this.setOptions(options);
-		}
+		},
 	},
 	methods: {
 		toggleDisabled(value) {
@@ -276,9 +252,9 @@ export default {
 				if (!justLocal) {
 					this.element.selectize.clearOptions();
 					let optionValues = this.currentOptions.map(o => o.value);
-					Object.keys(this.currentOptions)
+					Object.keys(this.element.selectize.options)
 						//IE11 fix, Object.values is not supported
-						.map(key => this.currentOptions[key])
+						.map(key => this.element.selectize.options[key])
 						.filter(option => optionValues.every(v => !equal(v, option.value)))
 						.forEach(option => this.element.selectize.removeOption(option.value));
 					this.element.selectize.addOption(this.currentOptions);
@@ -287,9 +263,9 @@ export default {
 				}
 			}
 		},
-		setValue(value, forceAdding = false) {
+		setValue(value) {
 			if (!value) value = this.value;
-			if (this.settings.forceAdding || forceAdding === true) {
+			if (this.settings.forceAdding) {
 				if (Array.isArray(value)) {
 					this.addOptionsIfNotExists(value);
 				} else {
@@ -299,137 +275,67 @@ export default {
 			this.element.selectize.setValue(value, true);
 			this.log('Value Set: ' + value);
 		},
-		clearOptions() {
-			return this.setOptions([]);
-		},
-		setOptions(options = []) {
+		setOptions(options) {
 			// Save selected items before clear options (like backup)
 			let items = this.value;
-
-			// Set options value
-			this.currentOptions = options;
-
 			// Disable onchange event while items readding
 			this.disableTriggerOnChange();
-
-			// clearOptions will remove items too
+			// Add options, clearOptions will remove items too
 			this.element.selectize.clearOptions();
-
-			// Add options again
-			if (Array.isArray(options)) {
-				options.forEach(option => this.addOption(option));
-			} else {
-				this.addOption(option);
-			}
-
+			options.forEach(option => this.element.selectize.addOption(option));
 			// Set items form backup
 			this.addItems(items);
-
 			this.element.selectize.refreshOptions(false);
 			this.setValue();
-
-			// Set last options, if more than 1
-			if (this.currentOptions && this.currentOptions.length) {
-				this.lastOptions = this.currentOptions;
-			}
-
 			// Reload onchange event
 			this.enableTriggerOnChange();
-			return this.currentOptions;
+			return this.options;
 		},
-
 		// Add options if array
 		addOptions(options) {
 			if (Array.isArray(options)) {
 				options.forEach(option => this.element.selectize.addOption(option));
 				return options;
 			}
-
 			this.addOption(options);
-
-			// Set last options, if more than 1
-			if (this.currentOptions && this.currentOptions.length) {
-				this.lastOptions = this.currentOptions;
-			}
-
-			this.element.selectize.refreshOptions(false);
-			this.setValue();
-
-			return this.currentOptions;
+			return this.options;
 		},
-
 		// Add one option
 		addOption(option) {
 			let valueField = this.settings.valueField || 'value';
 			let labelField = this.settings.labelField || 'text';
-			let findOldOption = this.currentOptions.find(oldOption => oldOption[valueField] === option[valueField]);
-
+			let findOldOption = this.element.selectize.options.find(oldOption => oldOption[valueField] === option[valueField]);
 			// If option is already added, remove it to overwrite
 			if (findOldOption) {
 				this.element.selectize.removeOption(findOldOption[valueField]);
 			}
-
 			this.element.selectize.addOption(option);
 			this.element.selectize.refreshOptions(false);
-
-			// Set last options, if more than 1
-			if (this.currentOptions && this.currentOptions.length) {
-				this.lastOptions = this.currentOptions;
-			}
-
-			this.element.selectize.refreshOptions(false);
-			this.setValue();
-
-			return this.currentOptions;
+			return this.options;
 		},
 		setItems(items, force = false) {
 			// Disable onchange event while items readding
 			this.disableTriggerOnChange();
-
 			// Set items
 			this.element.selectize.clearItems();
 			this.addItems(items, force);
-
-
 			// Reload onchange event
 			this.enableTriggerOnChange();
-
-			return this.currentItems;
+			return items;
 		},
 		addItems(items, force = false) {
-
-			// If its array each in items
 			if (Array.isArray(items)) {
-
-				// Each in items and push it
 				items.forEach(item => this.addItem(items));
-
-				// Generated in addItem functon
-				return this.currentItems;
+				return items;
 			}
-
-			// If its object insert it
 			this.addItem(items, force);
-
-
-			return this.currentItems;
+			return items;
 		},
 		addItem(value, force = false) {
-
-			if (force) {
-				this.addOptionIfNotExists(value);
-			}
-
-			// Search value from options
+			if (force) this.addOptionIfNotExists(value);
 			value = this.getValueFromOptions(value);
-
-			// Add item to selectize
 			this.element.selectize.addItem(value);
-
-			// Set component variable
-			this.currentItems = this.currentItems.concat(value);
-
-			return this.currentItems;
+			return [value];
 		},
 		removeItem(value) {
 			value = this.getValueFromOptions(value);
@@ -437,82 +343,23 @@ export default {
 			this.setValue();
 			return value;
 		},
-		removeAllOptionsExcept(notRemovableOptions) {
-			let valueField = this.settings.valueField || 'value';
-			let labelField = this.settings.labelField || 'text';
-
-			// Convert remove options to array
-			notRemovableOptions = Array.isArray(notRemovableOptions) ? notRemovableOptions : [notRemovableOptions];
-
-			var notRemovableOptionIds = notRemovableOptions.map(option => {
-
-				// If option is object, get valueField
-				if (typeof option === 'object' && !Array.isArray(option)) {
-					return option[valueField];
-				}
-
-				// If its string or int or bool
-				return option;
-
-			});
-
-			// Filter options, if removeIds not found in options
-			var optionsAfterFilter = this.currentOptions.filter(option => optionToRemoveIds.indexOf(option[valueField]) === -1);
-			
-
-			// Set filtered options
-			this.setOptions(optionsAfterFilter);
-
-			return this.currentOptions;
-
-		},
-		removeOptions(removeOptions) {
-			let valueField = this.settings.valueField || 'value';
-			let labelField = this.settings.labelField || 'text';
-
-			// Convert remove options to array
-			removeOptions = Array.isArray(removeOptions) ? removeOptions : [removeOptions];
-
-			var optionToRemoveIds = removeOptions.map(option => {
-
-				// If option is object, get valueField
-				if (typeof option === 'object' && !Array.isArray(option)) {
-					return option[valueField];
-				}
-
-				// If its string or int or bool
-				return option;
-
-			});
-
-			// Filter options
-			var optionsAfterFilter = this.currentOptions.filter(option => optionToRemoveIds.indexOf(option[valueField]) !== -1);
-
-			// Set filtered options
-			this.setOptions(optionsAfterFilter);
-
-			return this.currentOptions;
-		},
 		addOptionsIfNotExists(values) {
-
 			if (Array.isArray(value)) {
 				values.forEach(value => this.addOptionIfNotExists(value));
-				return this.currentOptions;
+			} else {
+				return this.addOptionIfNotExists(values);
 			}
-
-			return this.addOptionIfNotExists(values);
+			return values;
 		},
 		addOptionIfNotExists(value) {
 			let found = false;
 			let valueField = this.settings.valueField || 'value';
 			let labelField = this.settings.labelField || 'text';
-
 			// Check value is not empty
 			if (!value && !value.trim()) {
 				this.log('Value is empty when adding option');
 				return;
 			}
-
 			// Find by value
 			this.currentOptions.forEach(function(option) {
 				if (option[valueField] === value) {
@@ -521,33 +368,21 @@ export default {
 					return;
 				}
 			});
-
 			// If option not exists add
 			if (found === true) return value;
-
-			// Set option values
 			let option = {};
 			option[valueField] = value;
 			option[labelField] = value;
-
-			// Add option to selectize
 			this.element.selectize.addOption(option);
-
-			return this.currentOptions;
+			return value;
 		},
 		addItemAsOption(option) {
 			// Find option by valueField
 			let valueField = this.settings.valueField || 'value';
-
-			// Add option
-			this.addOptionIfNotExists(option);
-
-			// Add item to selectize
+			this.element.selectize.addOptionIfNotExists(option);
 			this.element.selectize.addItem(option[valueField]);
-
 			this.setValue();
-
-			return this.currentOptions;
+			return option;
 		},
 		setFocus() {
 			this.element.selectize.focus();
@@ -581,19 +416,15 @@ export default {
 				if (!value[valueField]) {
 					this.log('Item is object, but ' + valueField + ' field is not exists in ' + JSON.stringify(value));
 				}
-
 				return value[valueField];
 			}
-
 			// Check option is exists
 			if (!this.currentOptions.find(option => option[valueField] == value)) {
 				this.log('Item not exists in options with value ' + value);
 				return value;
 			}
-
 			return value;
 		},
-
 		setOptionGroups(optgroups) {
 			var self = this;
 			var optgroupId = self.settings.optgroupValueField || 'id';
