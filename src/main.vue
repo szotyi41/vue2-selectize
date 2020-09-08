@@ -292,7 +292,7 @@ export default {
 		clearOptions() {
 			return this.setOptions([]);
 		},
-		setOptions(options) {
+		setOptions(options = []) {
 			// Save selected items before clear options (like backup)
 			let items = this.value;
 
