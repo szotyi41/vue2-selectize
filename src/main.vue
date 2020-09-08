@@ -309,7 +309,7 @@ export default {
 
 			// Set last options, if more than 1
 			if (this.currentOptions && this.currentOptions.length) {
-				this.lastOptions = this.options;
+				this.lastOptions = this.currentOptions;
 			}
 
 			// Reload onchange event
