@@ -104,9 +104,9 @@ export default {
 				self.log('Select only one item: ');
 				self.log(self.selectOnlyOneItem);
 				self.log('Items:');
-				self.log(self.items);
+				self.log(self.value);
 
-				if (self.selectOnlyOneItem === true && self.items && self.items.length) {
+				if (self.selectOnlyOneItem === true && self.itemsvalue && self.value.length) {
 					return;
 				}
 
