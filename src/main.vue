@@ -101,11 +101,12 @@ export default {
 			let onDropdownClose = this.settings.onDropdownClose;
 			this.settings.onDropdownOpen = function($dropdown = null) {
 
-				this.log('Select only one item: ' + this.selectOnlyOneItem.toString());
-				this.log('Items:');
-				this.log(this.items);
+				self.log('Select only one item: ');
+				self.log(self.selectOnlyOneItem);
+				self.log('Items:');
+				self.log(self.items);
 
-				if (this.selectOnlyOneItem === true && this.items && this.items.length) {
+				if (self.selectOnlyOneItem === true && self.items && self.items.length) {
 					return;
 				}
 
