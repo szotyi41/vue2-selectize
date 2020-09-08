@@ -65,7 +65,8 @@ export default {
 			default: false
 		},
 		options: {
-			type: Array
+			type: Array,
+			default: []
 		}
 	},
 	data() {
@@ -77,6 +78,7 @@ export default {
 			focus: false,
 			inputText: '',
 			items: [],
+			currentItems: [],
 			options: [],
 			lastOptions: []
 		};
@@ -111,6 +113,10 @@ export default {
 			let onDropdownOpen = this.settings.onDropdownOpen;
 			let onDropdownClose = this.settings.onDropdownClose;
 			this.settings.onDropdownOpen = function($dropdown = null) {
+
+
+				console.log('select only one:', this.settings.selectOnlyOneItem);
+				console.log(this.items);
 
 				if (this.settings.selectOnlyOneItem && this.items && this.items.length) {
 					return;
@@ -178,6 +184,8 @@ export default {
 			disableTriggerOnChange: this.disableTriggerOnChange,
 			enableTriggerOnChange: this.enableTriggerOnChange,
 			selectOnlyOneItem: this.selectOnlyOneItem,
+			removeOptions: this.removeOptions,
+			removeAllOptionsExcept: this.removeAllOptionsExcept,
 			...this.settings
 		});
 
@@ -386,7 +394,7 @@ export default {
 			// Reload onchange event
 			this.enableTriggerOnChange();
 
-			return this.items;
+			return this.currentItems;
 		},
 		addItems(items, force = false) {
 
@@ -397,14 +405,14 @@ export default {
 				items.forEach(item => this.addItem(items));
 
 				// Generated in addItem functon
-				return this.items;
+				return this.currentItems;
 			}
 
 			// If its object insert it
 			this.addItem(items, force);
 
 
-			return this.items;
+			return this.currentItems;
 		},
 		addItem(value, force = false) {
 
@@ -419,9 +427,9 @@ export default {
 			this.element.selectize.addItem(value);
 
 			// Set component variable
-			this.items = this.items.concat(value);
+			this.currentItems = this.currentItems.concat(value);
 
-			return [value];
+			return this.currentItems;
 		},
 		removeItem(value) {
 			value = this.getValueFromOptions(value);
