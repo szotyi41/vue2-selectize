@@ -338,7 +338,7 @@ export default {
 		addOption(option) {
 			let valueField = this.settings.valueField || 'value';
 			let labelField = this.settings.labelField || 'text';
-			let findOldOption = this.element.selectize.options.find(oldOption => oldOption[valueField] === option[valueField]);
+			let findOldOption = this.currentOptions.find(oldOption => oldOption[valueField] === option[valueField]);
 
 			// If option is already added, remove it to overwrite
 			if (findOldOption) {
