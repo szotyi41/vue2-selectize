@@ -292,7 +292,7 @@ export default {
 			let items = this.value;
 
 			// Set options value
-			this.options = options;
+			this.currentOptions = options;
 
 			// Disable onchange event while items readding
 			this.disableTriggerOnChange();
@@ -308,13 +308,13 @@ export default {
 			this.setValue();
 
 			// Set last options, if more than 1
-			if (this.options && this.options.length) {
+			if (this.currentOptions && this.currentOptions.length) {
 				this.lastOptions = this.options;
 			}
 
 			// Reload onchange event
 			this.enableTriggerOnChange();
-			return this.options;
+			return this.currentOptions;
 		},
 
 		// Add options if array
@@ -327,11 +327,11 @@ export default {
 			this.addOption(options);
 
 			// Set last options, if more than 1
-			if (this.options && this.options.length > 1) {
-				this.lastOptions = this.options;
+			if (this.currentOptions && this.currentOptions.length) {
+				this.lastOptions = this.currentOptions;
 			}
 
-			return this.options;
+			return this.currentOptions;
 		},
 
 		// Add one option
@@ -349,11 +349,11 @@ export default {
 			this.element.selectize.refreshOptions(false);
 
 			// Set last options, if more than 1
-			if (this.options && this.options.length > 1) {
-				this.lastOptions = this.options;
+			if (this.currentOptions && this.currentOptions.length) {
+				this.lastOptions = this.currentOptions;
 			}
 
-			return this.options;
+			return this.currentOptions;
 		},
 		setItems(items, force = false) {
 			// Disable onchange event while items readding
@@ -433,13 +433,13 @@ export default {
 
 			});
 
-			var optionsAfterFilter = this.options.filter(option => optionToRemoveIds.indexOf(option[valueField]) === -1);
+			var optionsAfterFilter = this.currentOptions.filter(option => optionToRemoveIds.indexOf(option[valueField]) === -1);
 			
 
 			// Set filtered options
 			this.setOptions(optionsAfterFilter);
 
-			return this.options;
+			return this.currentOptions;
 
 		},
 		removeOptions(removeOptions) {
@@ -462,12 +462,12 @@ export default {
 			});
 
 			// Filter options
-			var optionsAfterFilter = this.options.filter(option => optionToRemoveIds.indexOf(option[valueField]) !== -1);
+			var optionsAfterFilter = this.currentOptions.filter(option => optionToRemoveIds.indexOf(option[valueField]) !== -1);
 
 			// Set filtered options
 			this.setOptions(optionsAfterFilter);
 
-			return this.options;
+			return this.currentOptions;
 		},
 		addOptionsIfNotExists(values) {
 
